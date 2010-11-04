@@ -17,3 +17,19 @@ if (isset($options['a'])) {
   $reporter->showAdvise();
 }
 $runner->run($reporter);
+
+/*
+TODO:
+
+http://railscasts.com/episodes/155-beginning-with-cucumber
+
+features/
+features/helpers (support?)
+
+Feature: ...
+  In order ...
+  As a ...
+  I want ...
+
+action -> step
+*/

@@ -301,12 +301,12 @@ class FeatureFileRunner {
     }
   }
   function findHelper($featureFileName) {
-    if (!is_dir('helpers')) {
-      $this->advise[] = "Directory helpers/ not found. Create it with:\n    mkdir helpers";
+    if (!is_dir('features/helpers')) {
+      $this->advise[] = "Directory features/helpers/ not found. Create it with:\n    mkdir features/helpers";
     }
     if (preg_match('~^features/(.+)\.feature$~', $featureFileName, $mm)) {
       $name = $mm[1];
-      $helperFileName = 'helpers/' . $name . '_helper.php';
+      $helperFileName = 'features/helpers/' . $name . '_helper.php';
       if (is_file($helperFileName)) {
         require_once($helperFileName);
         $className = implode(array_map('ucfirst', array_map('strtolower', explode('_', $name)))) . 'Helper';
