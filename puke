@@ -3,17 +3,17 @@
 
 require_once 'puke.inc.php';
 
-$options = getopt("ah");
+$options = getopt("qh");
 if (isset($options['h'])) {
   echo "puke feature runner.\n";
   echo "  USAGE puke [OPTIONS]\n";
   echo "    h Show this help text\n";
-  echo "    a Show Advise on next step\n";
+  echo "    q Quiet - Don't show Advise on next step\n";
   exit;
 }
 $runner = new FeatureRunner();
 $reporter = new ConsoleReporter();
-if (isset($options['a'])) {
+if (!isset($options['q'])) {
   $reporter->showAdvise();
 }
 $runner->run($reporter);
@@ -23,13 +23,6 @@ TODO:
 
 http://railscasts.com/episodes/155-beginning-with-cucumber
 
-features/
-features/helpers (support?)
+simpletest
 
-Feature: ...
-  In order ...
-  As a ...
-  I want ...
-
-action -> step
 */

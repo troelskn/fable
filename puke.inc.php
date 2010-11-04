@@ -243,6 +243,7 @@ class LogAdviseProxyReporter {
   protected $reporter;
   public $missing = array();
   public $noFail = array();
+  public $scenarioCount = 0;
   function __construct($reporter) {
     $this->reporter = $reporter;
   }
@@ -257,6 +258,9 @@ class LogAdviseProxyReporter {
       $this->noFail[] = array(
         'line' => $args[0],
         'lineNumber' => $args[3]);
+    }
+    if ($method == 'printScenario') {
+      $this->scenarioCount++;
     }
     return call_user_func_array(array($this->reporter, $method), $args);
   }
@@ -273,12 +277,21 @@ class FeatureFileRunner {
     $log = new LogAdviseProxyReporter($reporter);
     $p = new Parser(new AnnotationExecutor($helper), $log);
     $p->parse(file_get_contents($this->featureFileName), $this->featureFileName);
+    if ($log->scenarioCount == 0) {
+      $this->advise[] = "You don't have any scenarios in your feature. You can use the following template:"
+        . "\n" . "
+  Scenario: ...
+    Given ...
+    When ...
+    Then ...
+";
+    }
     foreach ($log->missing as $missing) {
       if (preg_match('/^\s*(given|when|then|but|and)\s*(.+)$/i', $missing['line'], $mm)) {
         $keyword = ucfirst(strtolower($missing['keyword']));
         $body = $mm[2];
         $mehod_name = strtolower($keyword) . '_' . trim(strtolower(preg_replace('/[^a-zA-Z]+/', '_', trim($mm[2]))), '_');
-        $this->advise[] = "You have an unrecognised action in line " . $missing['lineNumber'] . "."
+        $this->advise[] = "You have an unrecognised step in line " . $missing['lineNumber'] . "."
           . " You can use the following template:"
           . "\n\n" . "  /**
    * " . $keyword . ": /".preg_quote($body, '/')."/i
@@ -340,7 +353,13 @@ class FeatureRunner {
         }
       }
       if (!$found) {
-        $reporter->printAdvise("No feature specs found. Start by creating one in features/my_feature.feature.");
+        $reporter->printAdvise(
+          "No feature specs found. Start by creating one in features/my_feature.feature. You can use the following template:"
+          . "\n" . "Feature: ...
+  In order ...
+  As a ...
+  I want ...
+");
       }
     } else {
       $reporter->printAdvise("Directory features/ not found. Create it with:\n    mkdir features");
