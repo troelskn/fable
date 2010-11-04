@@ -1,0 +1,19 @@
+#!/usr/bin/php
+<?php
+
+require_once 'puke.inc.php';
+
+$options = getopt("ah");
+if (isset($options['h'])) {
+  echo "puke feature runner.\n";
+  echo "  USAGE puke [OPTIONS]\n";
+  echo "    h Show this help text\n";
+  echo "    a Show Advise on next step\n";
+  exit;
+}
+$runner = new FeatureRunner();
+$reporter = new ConsoleReporter();
+if (isset($options['a'])) {
+  $reporter->showAdvise();
+}
+$runner->run($reporter);
