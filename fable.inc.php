@@ -174,9 +174,18 @@ class TestHelper {
   function fail($message) {
     $this->asserter->fail($message);
   }
+  function assert($bool, $message = "Assertion failed") {
+    if ($bool) {
+      $this->pass();
+    } else {
+      $this->fail($message);
+    }
+  }
   function setUp() {}
   function tearDown() {}
 }
+
+require_once 'web_test_helper.php';
 
 class ConsoleReporter {
   protected $showAdvise = false;
@@ -306,12 +315,12 @@ class FeatureFileRunner {
         $this->advise[] = "Your test on line " . $noPass['lineNumber']. " does not make any assertions.";
       }
     }
-    //    if ($this->advise) {
-    //      $reporter->printAdvise($this->advise[0], $this->featureFileName);
-    //    }
-    foreach ($this->advise as $advise) {
-      $reporter->printAdvise($advise, $this->featureFileName);
+    if ($this->advise) {
+      $reporter->printAdvise($this->advise[0], $this->featureFileName);
     }
+    //foreach ($this->advise as $advise) {
+    //  $reporter->printAdvise($advise, $this->featureFileName);
+    //}
   }
   function findHelper($featureFileName) {
     if (!is_dir('features/helpers')) {
@@ -327,7 +336,7 @@ class FeatureFileRunner {
           return new $className;
         } else {
           $this->advise[] = "Class $className not found in $helperFileName. You can use the following template:"
-            . "\n\n" . "class $className extends TestHelper {
+            . "\n\n" . "<?php\nclass $className extends TestHelper {
 }
 ";
         }
